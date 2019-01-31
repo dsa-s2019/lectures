@@ -1,0 +1,249 @@
+\documentclass[twocolumn, 11pt]{article}
+\usepackage[hmargin={0.5in, 0.5in}, vmargin={0.8in, 0.8in}]{geometry}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{titling}
+\usepackage{url}
+\newcommand*{\email}[1]{\href{mailto:#1}{\nolinkurl{#1}} }
+
+\usepackage{enumitem}
+\setitemize{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt}
+\setlength{\droptitle}{-4em}
+\pagestyle{fancy}
+
+\lhead{\sf STAT 6494}
+\rhead{\sf Spring 2019}
+\lfoot{\sf Statistical Data Science in Action}
+\rfoot{\sf TuTh 2:00PM -- 3:15PM}
+
+
+\title{STAT 6494: Statistical Data Science in Action, Spring 2019\vspace{-.75in}}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+\begin{description}
+\item[Instructors:] \hspace{0pt}
+  
+  Jun Yan, AUST 328\\
+  (860) 486-3416\\ \email{jun.yan@uconn.edu}
+  
+
+\item[Lectures:] \hspace{0pt}
+
+TuTh 2:00PM -- 3:15PM\\ 
+KNS 111
+
+\item[Office Hours:] \hspace{0pt}
+ThTu  3:30PM -- 4:30PM
+
+
+\item[HuskyCT:] \hspace{0pt}
+
+\begin{itemize}
+\item Log in using your NetID and NetID password
+  at \href{http://lms.uconn.edu}{\texttt{http://lms.uconn.edu}}.
+\item Use HuskyCT to access your grade book.
+\item May use the discussion tools to discuss class-related topics.
+\end{itemize}
+
+\item[Course Description:]
+
+Data Science in Action aims to prepare students to meet the realworld
+data science challenges through a learning-by-doing environment.
+Statisticians play a major role in the field of data science, but
+the traditional training offered by most statistics departments do not
+meet the constantly-evolving challenges from the industrial/business world.
+Many students have no hands-on experience with data processing and
+analysis on real world problems when they first face the job market.
+On the other hand, numerous real data projects are available that
+call for open participation, many in the form of data science
+competitions, data challenges, or hackathons
+This course aims to bridge the gap by helping students to meet real
+world data challenges on skills such as problem formulation,
+literature review, fast learning, critical review, team work, and
+communication. The instructor will coach the students to work on
+realworld projects and pick up new skills necessary for the projects.
+Students will present selected topics in class.
+
+\item[Modules] 
+The course consists of four modules:
+\begin{enumerate}
+\item
+  Lectures led by instructors on selected topics that are essential to data
+  science or immediately applicable for real-world data science projects (e.g.,
+  data competitions or data challenges).
+% A tentative list is
+% Some topics should be presented sooner (e.g., styles and shiny) 
+% Styles -> methods -> applications
+% We don't have to follow this order.
+% \begin{enumerate}
+% \item Style guidelines for computing % Jun
+% % \item Interactive visualization (Shiny) % Liz
+% %\item Clustering                                 % Kun
+% \item Optimization                             % Kun
+% \item High dimensional statistics  % Kun 
+% \item Dimension reduction               % Kun
+% \item Introduction to deep learning                           % Kun
+% \item Healthcare analytics and case studies
+% \item Time Series and Forecasting     % Jun
+% \item Nonparametric tools                 % Jun
+% \item Generalized additive models     % Liz
+% \item Analysis of 'omics data             % Liz
+% \item Clustered data analysis             % Jun
+% \item Big data computing                   % Liz
+% \item High Dimensional Data/Dimension Reduction, Optimization, Deep Learning, Clustering, % Kun
+% \item Interactive Visualization (Shiny), Generalized Additive Models,
+%       Analysis of 'Omics Data, Big Data Computing % Liz
+% \item Guidelines for Computer Programming, Time Series/Spatial Analysis Basics,
+%       Splines and Other Nonparametric Methods, Longitudinal and/or Clustered Data Methods. % Jun
+% \end{enumerate}
+\item
+  Topics presented by students (topics are selected by students based on
+  their interests, class needs, and instructor's suggestions), such as
+  reproducible  statistical analysis (RMarkdown, ...),
+  dynamic presentation (Shiny, ...),
+  version control (git, ...), and topics from
+  \url{https://peerj.com/collections/50-practicaldatascistats/}.
+  
+  % Student presentation starts from week~3. A tentative topic should be decided around week~3. 
+
+  For quality control, presentation slides are to sent to the instructor for comments one week before the presentation.
+
+\item Interim project presentations, discussion, and peer review.
+
+\item Final project presentations.
+
+\end{enumerate}
+
+\item[Prerequisite:]
+1) Applied statistics (STAT 5505/5605) or equivalent;
+2) Mathematical statistics (STAT 5585/5685) or equivalent;
+3) intermediate R/SAS/Python or other tools for data science;
+and 4) strong motivation to learn more outside of classroom.
+
+Or consent of instructor.
+
+\item[Specific Data Challenges in Class:] \hspace{0pt}
+  We will start with some ongoing data challenges in class.
+  \begin{enumerate}
+  \item
+    Atlantic Causal Inference Conference (ACIC) 2019 Data Challenge:
+    \url{https://sites.google.com/view/ACIC2019DataChallenge/data-challenge}.
+    \begin{quote}
+      Provide an estimate of the population average additive treatment effect (ATE) of a binary treatment on a binary or continuous outcome, and a 95\% confidence interval.  There are 3200 low dimensional datasets, and 3200 high-dimensional datasets. Within each track 100 datasets have been drawn from 32 unique data generating processes (DPG).   Participants will download these datasets, run analyses using their own computing resources, and upload results to the website for evaluation. Teams may choose to analyze only the low-dimensional  datasets, only the high-dimensional datasets, or submit results for both tracks.
+    \end{quote}
+    
+  \item
+    Joint Statistical Meeting (JSM) 2019 Data Challenge Expo:
+    \url{https://community.amstat.org/stat-computing/data-expo/data-expo-2019}.
+    \begin{quote}
+      The data set for the Data Challenge Expo 2019 will be the New York City Housing and Vacancy Survey. Public use data files and documentation are available here:  www.census.gov/programs-surveys/nychvs.html.  Contestants must use some portion of the New York City Housing and Vacancy Survey data, but can also combine other data sources for the analysis. We are gathering some possible research questions and will be posting them in the future.
+    \end{quote}
+
+  \item
+    NFL's Inaugural Big Data Bowl:
+    \url{https://operations.nfl.com/the-game/big-data-bowl/}.
+    \begin{quote}
+      The NFL’s inaugural Big Data Bowl is here. This sports analytics contest from NFL Football Operations is looking for talented members of the analytics community — from college students to professionals — to contribute to the NFL’s continuing evolution in the use of advanced analytics.
+    \end{quote}
+    
+  \end{enumerate}
+
+  \item[More Data/Challenges Sources:] \hspace{0pt}
+  \begin{enumerate}
+  \item \url{kaggle.com}
+  \item \url{datasciencebowl.com}
+  \item \url{drivendata.org}
+  \item \url{https://opendata.cityofnewyork.us/}
+  \item \url{https://data.ct.gov/}
+  \item \url{https://data.hartford.gov/}
+  \item \url{https://www.innocentive.com/}
+  \end{enumerate}
+
+\item[References:] \hspace{0pt} % Need to be updated ...
+
+Garrett Grolemund and Hadley Wickham (2017).  R for Data Science. O'Reilly.
+\url{http://r4ds.had.co.nz/}.
+
+Hadley Wickham (2014). Advanced R Programming, Chapman \& Hall. Source available on GitHub: \url{https://github.com/hadley/adv-r/}.
+
+\item[Grading:] Assessment of the subject will be based on
+the following components with weights shown in parentheses:
+
+\begin{description}
+\item[Attendance/Participation (10\%)]
+Participation includes active involvement in class discussions and presentation evaluations.
+Attendance to the project presentations in the last three weeks is required.
+Each absence costs 5 points until 10 points are exhausted.
+
+\item[Topic Presentations (20\%)]
+Students take turns to present on topics of interest to the whole
+class, with approval from the instructor.
+This is a teaching/learning oriented presentation.
+
+
+\item[Training Project (20\%)]
+One project will be used for training purpose and everyone works on
+the same project.
+
+
+\item[Course Project (40\%)]
+Each student is required to work independently on a class
+project on a topic of his/her choice, likely inspired by a data
+challenge. 
+The project should represent new work, not something you
+have done for another course or as part of your thesis.
+
+\begin{itemize}
+\item Project Proposal (5\%): A written proposal is due in week 5,
+  and should include a detailed description of what you plan to do, as
+  well as preliminary results.
+  
+
+\item Interim Progress Report and Presentation (10\%):
+  A written report of your project progress is due in week 10.
+  This report will indicate that your project is ``on track'' 
+  and includes results obtained thus far, a brief summary
+  of what these results mean, and what remains to be done.
+  Brief interim progress presentations will begin in week 10.
+
+\item Final Project Report (15\%) and Presentation (10\%): 
+  A final project presentation will occur during the last three weeks.
+  The schedule of the presentation will be finalized in week 2. The
+  written project report is due during the final week of classes.
+
+\end{itemize}
+
+\item[Communication (10\%)]
+  Communication is an important part of data science. This is to ensure
+  active participation in classroom discussion and critical review of
+  others' presentations or project reports.
+  
+
+\end{description}
+
+% \item[Important Dates:] Please mark your calendar.
+% \begin{center}
+% \begin{tabular}{ll}
+%   \toprule
+%   Date & Event \\
+%   \midrule
+%   Friday, 02/16 & Project proposal due\\  % end of week 5
+%   Friday, 03/30 & Project interim report due\\  % end of week 10
+%   Friday, 04/27 & Project paper due\\ % end of final exam week
+%   \bottomrule
+% \end{tabular}
+% \end{center}
+
+\end{description}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

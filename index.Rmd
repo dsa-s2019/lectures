@@ -1,0 +1,335 @@
+---
+title: "Statistical Data Science in Action"
+author: |
+  | Jun Yan
+  | Department of Statistics
+  | University of Connecticut
+date: "January 22, 2019"
+output: pdf_document
+link-citation: yes
+header-includes:
+- \newcommand{\E}{\mathbb{E}}
+- \newcommand{\dd}{\mathrm{d}}
+- \newcommand{\sgn}{\mathrm{sgn}}
+- \newcommand{\bx}{\textbf{x}}
+- \newcommand{\bX}{\textbf{X}}
+- \newcommand{\bz}{\textbf{z}}
+- \newcommand{\bbeta}{\boldsymbol{\beta}}
+- \newcommand{\bPsi}{\boldsymbol{\Psi}}
+- \newcommand{\chunksize}{\fontsize{7.6pt}{8pt}\selectfont}
+subtitle: Experiencing Realworld Data Analytics
+bibliography: packages.bib
+urlcolor: blue
+---
+
+
+## Preliminaries
+
+- R: SIAM workshop on R by Wenjie Wang
+    + [session one](https://wenjie-stat.me/2018-01-19-siam/);
+      [source repo](https://github.com/wenjie2wang/2018-01-19-siam/)
+    + [session two](https://wenjie-stat.me/2018-04-06-siam/);
+      [source repo](https://github.com/wenjie2wang/2018-04-06-siam/)
+
+- Python
+    + [Learning Python in one video](https://www.youtube.com/watch?v=N4mEzFDjqtA)
+
+- Bookdown by Yihui Xie
+    + [R package source](https://github.com/rstudio/bookdown)
+    + [online book](https://bookdown.org/yihui/bookdown/)
+
+- Git/GitHub 
+    + [Learn Git in 20 minues](https://www.youtube.com/watch?v=Y9XZQO1n_7c)
+
+## R Packages {.maxHeight600 }
+
+```{r setup, include=FALSE, echo = FALSE}
+options(width = 90)
+
+## decrease font size in code chunks for beamer
+if (knitr::is_latex_output()) {
+    ## https://stackoverflow.com/questions/
+    ## 25646333/code-chunk-font-size-in-rmarkdown-with-knitr-and-latex
+    knitr::opts_chunk$set(size = "chunksize")
+    def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+    knitr::knit_hooks$set(chunk = function(x, options) {
+        paste0("\\bigskip\\", options$size, "\n", x, "\n", "\\normalsize")
+    })
+}
+```
+
+```{r need-packages}
+##' Load needed packages, and install them if not installed.
+##'
+##' @usage need.packages(pkg)
+##' @param pkg A character vector specifying the packages needed to
+##'     reproduce this document.
+##' @param ... Other arguments passed to function
+##'     \code{\link[base]require}.
+##' @return \code{NULL} invisibly.
+##' @examples
+##' need.pacakges(c("ggplot2", "geepack"))
+need.packages <- function(pkg, ...)
+{
+    new.pkg <- pkg[! (pkg %in% installed.packages()[, "Package"])]
+    if (length(new.pkg))
+        install.packages(new.pkg, repos = "https://cloud.r-project.org")
+    foo <- function(a, ...) suppressMessages(require(a, ...))
+    sapply(pkg, foo, character.only = TRUE)
+    invisible(NULL)
+}
+pkgs <- c("bookdown", "revealjs")
+need.packages(pkgs)
+```
+
+
+```{r include = FALSE, echo = FALSE}
+## automatically create a bib database for R packages
+knitr::write_bib(c(
+  # .packages(),
+  pkgs
+  ), 'packages.bib')
+```
+
+
+## Motivation
+
+- Hands on realworld data analytics
+
+- Tools for analytics as well as tools for project management
+
+- Workflow ensuring reproducibility
+
+- Version control
+
+- Learning on the fly
+
+- Communications (oral, written, critical review, etc.)
+
+- Data science competitions / data challenges
+
+## Operation
+
+- Instructor is a coach
+
+- Everyone is both an instructor, a learner, and a reviewer
+
+- Projects (training/real; group/individual; common/open; repository)
+
+- Peer review like a journal review system
+
+- Open source book on data science in action
+
+- Guest lecturers
+
+- Outreach (partnership with CT Open Data, CT Data Collaborative, etc.)
+
+- Google
+
+## Topics
+
+- Clusterd data analysis (GEE, copulas, NLME)
+
+- Causal inference
+
+- Deep learning
+
+- Propensity score
+
+#  Preliminaries: Statistical and Causal Models
+
+## Simpson's Paradox
+
+- Edward Simpson (1951, JRSSb)
+
+- A statistical association that holds for an entire population is reversed in every subpopulation.
+
+- Table 1.1 Results of a study into a new drug, with gender being taken into account
+
+- The reason the drug appears to be harmful overall is that, if we select a drug user at random, that person is more likely to be a woman and hence less likely to recover than a random person who does not take the drug. 
+
+- Put differently, being a woman is a common cause of both drug taking and failure to recover.
+
+## Simpson's Paradox: Continuous varaible
+
+- Figure 1.1 Results of the exercise–cholesterol study, segregated by age
+
+- However, segregated data does not always give the correct answer. 
+
+- Suppose we looked at the same numbers from our first example of drug taking and recovery, instead of recording participants’ gender, patients’ blood pressure were
+recorded at the end of the experiment.
+
+    - the drug affects recovery by lowering the blood pressure of those who take it—but unfortunately, it also has a toxic effect. 
+    - would you recommend the drug to a patient?
+
+
+## Segregated data does not always give the correct answer
+
+- Table 1.2 Results of a study into a new drug, with posttreatment blood pressure taken into account
+
+- Since lowering blood pressure is one of the mechanisms by which treatment affects recovery, it makes no sense to separate the results based on blood pressure.
+
+- So we consult the results for the general population, we find that treatment increases the probability of recovery, and we decide that we should recommend treatment.
+
+- None of the information that allowed us to make a treatment decision—not the timing of the measurements, not the fact that treatment affects blood pressure, and not the fact that blood pressure affects recovery—was found in the data.
+
+- Trivial though the assumption “treatment does not cause sex” may seem, there is no way to test it in the data, nor is there any way to represent it in the mathematics of standard statistics. 
+
+## A calculus of causation
+
+In order to rigorously approach our understanding of the causal story behind data, we need four things:
+
+1. A working definition of “causation.”
+2. A method by which to formally articulate causal assumptions—that is, to create causal
+models.
+3. A method by which to link the structure of a causal model to features of data.
+4. A method by which to draw conclusions from the combination of causal assumptions
+embedded in a model and data.
+
+A variable $X$ is a cause of a variable $Y$ if $Y$ in any way relies on X for its value.
+
+## Graph
+
+- Graph theory provides a useful mathematical language that allows us to address problems of causality with simple operations similar to those used to solve arithmetic problems.
+
+- A mathematical graph is a collection of _vertices_ (or, as we will call them, _nodes_) and _edges_.
+
+- Two nodes are _adjacent_ if there is an edge between them. 
+- _complete graph_
+- _path_ between two nodes
+- directed vs undirected
+- parent vs child
+- ancester vs descendant
+- cyclic vs acyclic
+
+## Structural causal model
+
+- A structural causal model consists of two sets of variables $U$ and $V$, and a set of functions $f$ that assigns each variable in $V$ a value based on the values of the other variables in the model.
+
+- A variable $X$ is a direct cause of a variable $Y$ if $X$ appears in the function that assigns $Y$’s value. $X$ is a cause of $Y$ if it is a direct cause of $Y$,or of any cause of $Y$.
+
+- exogenous vs endogenous
+
+- root node
+
+- Every SCM is associated with a graphical causal model, referred to informally as a “graph- ical model” or simply “graph.”
+
+- We will deal primarily with SCMs for which the graphical models are directed acyclic graphs (DAGs). 
+
+## Product decomposition
+
+- Rule of product decomposition: 
+For any model whose graph is acyclic, the joint distribution of the variables in the model is given by the product of the conditional distributions $P(child \mid parents)$ over all the “families” in the graph. Formally, we write this rule as
+\[
+P(x_1, x_2, \ldots , x_n) = \prod_i P(x_i | pa_i)
+\]
+where $pa_i$ stands for the values of the parents of variable $X_i$.
+
+# Graphical Models and Their Applications
+
+## Connecting Models to Data
+
+- Probabilities, graphs, structural equations
+
+- The concept of independence, which in the language of probability is defined by alge
+braic equalities, can be expressed visually using directed acyclic graphs (DAGs). 
+
+- Further, this graphical representation will allow us to capture the probabilistic information that is embedded in a structural equation model.
+
+- Shoule be able to predict patterns of independencies in the data, based solely on the structure of the model’s graph, without relying on any quantitative information carried by the equations or by the distributions of the errors
+
+## Chains
+
+- Figure 2.1
+
+    1. $Z$ and $Y$ are dependent
+    2. $Y$ and $X$ are dependent
+    3. $Z$ and $X$ are likely dependent
+    4. $Z$ and $X$ are independent, conditional on $Y$
+
+- SCM 2.2.4 Pathological Case of Intransitive Dependence
+
+- This configuration of variables --- three nodes and two edges, with one edge directed into and one edge directed out of the middle variable --- is called a _chain_.
+
+- __Rule 1 (Conditional Independence in Chains)__ Two variables, $X$ and $Y$, are conditionally independent given $Z$, if there is only one unidirectional path between $X$ and $Y$ and $Z$ is any set of variables that intercepts that path.
+
+## Forks
+
+- Figure 2.2
+
+    1. $X$ and $Y$ are dependent
+    2. $X$ and $Z$ are dependent
+    3. $Z$ and $Y$ are likely dependent
+    4. $Y$ and $Z$ are independent, conditional on $Y$
+
+- Why are $Y$ and $Z$ independent conditional on X?
+
+- This configuration of variables --- three nodes, with two arrows emanating from the middle variable --- is called a _fork_.
+
+- __Rule2 (Conditional Independence in Forks)__ If a variable $X$ is a common cause of variables $Y$ and $Z$, and there is only one path between $Y$ and $Z$, then $Y$ and $Z$ are independent conditional on $X$
+
+## Colliders
+
+- Figure 2.3
+
+    1. $X$ and $Z$ are dependent
+    2. $Y$ and $Z$ are dependent
+    3. $X$ and $Y$ are independent
+    4. $X$ and $Y$ are dependent conditional on $Z$
+    
+- A _collider_ node occurs when one node receives edges from two other nodes. 
+
+- Why does point 4 hold? Conditioning on a collision node produces a dependence between the node’s parents
+
+- Monty Hall problem
+
+- __Rule 3 (Conditional Independence in Colliders)__ If a variable $Z$ is the collision node between two variables $X$ and $Y$, and there is only one path between $X$ and $Y$, then $X$ and $Y$ are unconditionally independent but are dependent conditional on $Z$ and any descendants of $Z$
+
+## $d$-separation
+
+- Is there a criterion or process that can be applied to a graphical causal model of any complexity in order to predict dependencies that are shared by all data sets generated by that graph?
+
+- A pair of nodes are $d$-connected if there exists a connecting path between them, or $d$-separated, if there exists no such path. 
+
+- When we say that a pair of nodes are $d$-separated, we mean that the variables they represent are definitely independent; when we say that a pair of nodes are $d$-connected, we mean that they are possibly, or most likely, dependent.
+
+- Two nodes are $d$-separated if every path between them (should any exist) is blocked.
+
+- The paths between variables can be thought of as pipes, and dependence as the water that flows through them; if even one pipe is unblocked, some water can pass from one place to another, and if a single path is clear, the variables at either end will be dependent. However, a pipe need only be blocked in one place to stop the flow of water through it, and similarly, it takes only one node to block the passage of dependence in an entire path.
+
+## Nodes that can block a path
+
+- If we are not conditioning on any variable, then only colliders can block a path. 
+
+- If, however, we are conditioning on a set of nodes $Z$, then the following kinds of nodes can block a path:
+    + A collider that is not conditioned on (i.e., not in $Z$), and that has no descendants in $Z$
+    + A chain or fork whose middle node is in $Z$.
+
+- Definition 2.4.1 ($d$-separation)
+
+- Example, Figure 2.7
+
+## Model testing
+
+- $d$-separation will tell us which variables in $G$ must be independent conditional on which other variables. Conditional independence is something we can test for using a data set.
+
+- Example, Figure 2.9
+    + Not only we know that the model is wrong, but we also know where it is wrong; the true model must have a path between $W$ and $Z_1$ that is not $d$-separated by $X$
+    + Finally, this is a theoretical result that holds for all acyclic models with independent errors (Verma and Pearl 1990), and we also know that if every d-separation condition in the model matches a conditional independence in the data, then no further test can refute the model. This means that, for any data set whatsoever, one can always find a set of functions F for the model and an assignment of probabilities to the U terms, so as to generate the data precisely.
+
+## Causal search
+
+- $d$-separation presents several advantages over the global testing method
+    + nonparametric
+    + local test
+
+- could test and reject many possible models in this way, even- tually whittling down the set of possible models to only a few whose testable implications do not contradict the dependencies present in the data set. 
+
+- some graphs have indistinguishable implication
+
+- allows us to search a data set for the causal models that could have generated it.
+
+
+
+
+
