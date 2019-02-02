@@ -330,6 +330,51 @@ braic equalities, can be expressed visually using directed acyclic graphs (DAGs)
 - allows us to search a data set for the causal models that could have generated it.
 
 
+# The Effects of Interventions
+
+## Intervention
+
+- Predict effects of interventions.
+
+- Correlation is not causation. 
+
+- Randomized controlled experiment can solve this problem. But we can't control some factors. Then only observationsl study can be conducted, which is hard to untangle causal from merely correlative.
+
+- Intervene and condition are different. Intervene changes the model structure, but condition doesn't. (Figure 3.2)
+
+- $do$-expression and graph surgery can help solve this problem.
+
+## The Adjustment Formula
+
+- Causal effect; adjusting for Z or controlling for Z. 
+
+- Example: Simpson's paradox, Figure 3.3, 3.4.
+
+### To Adjust or not?
+
+- __Rule 1 (The Causal Effect Rule)__ Given a graph G in which a set of variables PA are designated as the parents of X, the causal effect of X on Y is given by
+\[
+P(Y = y|do(X = x)) = \sum_z P(Y = y|X = x, PA = z)P(PA = z)
+\]
+where z ranges over all the combinations of values that the variables in PA can take. If we multiply and divide the right hand side by the probability $P(X = x|PA = z)$, we get a more convenient form:
+\[
+P(y|do(x)) = \sum_z \frac{P(X = x, Y = y, PA = z)}{P(X = x|PA = z)}
+\]
+
+- It is possible to use graphs and underlying assumptions, we are able to identify causal relationships in purely obervational data. 
+
+- In most practical cases, the set of X’s parents (PA(X)) will contain unobserved variables that would prevent us from calculating the conditional probabilities in the adjustment formula. Solution: adjust other variables to substitute for the unmeasured elements of PA(X).
+
+### Multiple Interventions and the Truncated Product Rule
+
+- _Truncated product formula_ or _g-formula_:
+\[
+P(x_1, x_2, \dots, x_n|do(x)) = \prod_i P(x_i|pa_i)
+\]
+for all $X_1, X_2, \dots, X_n$ not in $X$.
+
+- \[ P(x_1, x_2, \dots, x_n|do(x)) = \frac{P(x_1, x_2, \dots, x_n, x)}{P(x|pa)} 
+\]
 
 
-
+## The Backdoor Criterion
