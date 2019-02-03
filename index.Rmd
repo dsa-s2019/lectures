@@ -378,3 +378,124 @@ for all $X_1, X_2, \dots, X_n$ not in $X$.
 
 
 ## The Backdoor Criterion
+
+- Under what conditions, is the structure of the causal graph sufficient for computing a causal effect from a given data set? The rest of this chapter will focuse on this problem.
+
+- __The Backdoor Criterion__ Given an ordered pair of variables (X,Y) in a directed acyclic graph G, a set of variables Z satisfies the backdoor criterion relative to (X, Y) if no node in Z is a descendant of X, and Z blocks every path between X and Y that contains an arrow into X. (when conditioned on Z)
+
+- If a set of variables Z satisfies the backdoor criterion for X and Y, then the causal effect of X on Y is given by the formula:
+\[
+P(Y = y|do(X = x)) = \sum_z P(Y = y|X = x, Z = z)P(Z = z)
+\]
+just as when we adjust for PA(X). (Note that PA(X) always satisfies the backdoor criterion.)
+Example Figure 3.3
+
+- In general, we would like to condition on a set of nodes Z such that
+
+  1. We block all spurious paths between X and Y.
+  2. We leave all directed paths from X to Y unperturbed.
+  3. We create no new spurious paths.
+
+- _Effect modification_ or _moderation_. Find the causal effect when we condition on some variable. Example, Figure 2.8; 3.6.
+
+## The Front-Door Criterion (Example, Smoking and Lung Cancer)
+
+- __Front-Door__ A set of variables Z is said to satisfy the front-door criterion relative to an ordered pair of variables (X, Y) if
+ 
+  1. Z intercepts all directed paths from X to Y.
+  2. There is no unblocked path from X to Z.
+  3. All backdoor paths from Z to Y are blocked by X.
+
+- __Front-Door Adjustment__ If Z satisfies the front-door criterion relative to (X, Y) and if $P(x, z) > 0$, then the causal effect of X on Y is identifiable and is given by the formula:
+\[
+P(y|do(x)) = \sum_z P(z|x) \sum_{x'} P(y|x', z)P(x')
+\]
+
+## Conditional Interventions and Covariate-Specific Effects
+
+- Interventions may involve dynamic policies in which a variable X is made to respond in a specified way to some set Z of other variables—say, through a functional relationship $x = g(z)$ or through a stochastic relationship, whereby X is set to x with probability $P^*(x|z)$.
+
+- The result of implementing such a policy is a probability distribution written $P(Y = y|do(X = g(Z)))$, which depends only on the function $g$ and the set $Z$ of variables that drive $X$.
+
+- __Rule 2__ The z-specific effect $P(Y = y|do(X = x), Z = z)$ is identified whenever we can measure a set S of variables such that $S \cup Z$ satisfies the backdoor criterion. Moreover, the z-specific effect is given by the following adjustment formula:
+\[
+P(Y = y|do(X = x), Z = z) = \sum_s P(Y = y|X = x, S = s, Z = z)P(S = s|Z = z)
+\]
+
+- To compute $P(Y = y|do(X = g(Z)))$, we condition on $Z = z$ and write:
+\begin{equation*}
+\begin{split}
+P(Y = y|do(X = g(Z))) &= \sum_z P(Y = y|do(X = g(Z)), Z = z)P(Z = z|do(X = g(Z)))\\
+                      &= \sum_z P(Y = y|do(X = g(z)), Z = z)P(Z = z)\\
+                      &= \sum_z P(Y = y|do(X = x),z)|_{x=g(z)}P(Z = z)
+\end{split}
+\end{equation*}
+
+## Inverse Probability Weighing
+
+- Practical difficulties: adjusting for Z but Z contains too many variables.
+
+- Assuming that the function $P(X = x|Z = z)$ is available to us, we can use it to generate artificial samples that act as though they were drawn from the postintervention probability $P_m$, rather than $P(x, y, z)$.
+
+- \begin{equation*}
+\begin{split}
+P(y|do(x)) &= \sum_z P(Y = y|X = x, Z = z)P(Z = z)\\
+           &= \sum_z \frac{P(Y = y|X = x, Z = z)P(X = x|Z = z)P(Z = z)}{P(X = x|Z = z)}\\
+           &= \sum_z \frac{P(X = x, Y = y, Z = z)}{P(X = x|Z = z)}
+\end{split}
+\end{equation*}
+
+## Mediation
+
+- Causation: direct and indirect (through mediating variables).
+
+- Seperate direct and indirect effects: condition on mediating variables. Example, Figure 3.11, 3.12
+
+- Intervene. For any three variables $X$, $Y$, and $Z$, where $Z$ is a mediator between $X$ and $Y$, _Controlled direct effect_ (CDE) on $Y$ of changing the value of $X$ from $x$ to $x'$ is defined as:
+\[
+CDE = P(Y = y|do(X = x), do(Z = z)) - P(Y = y|do(X = x'), do(Z = z))
+\]
+Example Figure 3.12.
+
+- In general, the CDE of $X$ on $Y$, mediated by $Z$, is identifiable if the following two properties hold:
+  1. There exists a set $S_1$ of variables that blocks all backdoor paths from $Z$ to $Y$.
+  2. There exists a set $S_2$ of variables that blocks all backdoor paths from X to Y, after
+  deleting all arrows entering Z (intervene on Z).
+ 
+
+## Causal Inference in Linear Systems
+
+- Assumptions used in this section:
+  1. the relationships between variables are linear.
+  2. all error terms have Gaussian (or “normal”) distributions.
+
+### Structural versus Regression Coefficients
+
+- A regression equation is descriptive; it makes no assumptions about causation. 
+
+- We use Greek letter ($\alpha$, $\beta$ and so on) for structural coefficients and $r_i$ for regression coefficients. $U_1$ for error term in structural equations and $\epsilon_i$ for those in regression equations.
+
+### The Causal Interpretation of Structural Coefficients
+
+- In a linear system, every path coefficient stands for the direct effect of the independent variable, $X$, on the dependent variable, $Y$.
+
+- In a linear system, the total effect of $X$ on $Y$ is simply the sum of the products of the coefficients of the edges on every nonbackdoor path from $X$ to $Y$. Example, Figure 3.13.
+
+### Identifying Structural Coefficients and Causal Effect
+
+- Total effect: First, we find a set of covariates $Z$ that satisfies the backdoor criterion from $X$ to $Y$ in the model. Then, we regress $Y$ on $X$ and $Z$. The coefficient of $X$ in the resulting equation represents the true causal effect of $X$ on $Y$. Example, Figure 3.14.
+
+- Direct effect: In a linear system, this direct effect is the structural coefficient $\alpha$ in the function $y = \alpha x + \beta z + \cdots + U_Y$ that defines $Y$ in the system.
+
+- Direct effect (from data): 
+  1. First, we remove the edge from $X$ to $Y$ (if such an edge exists), and call the resulting
+  graph $G_\alpha$. If, in $G_\alpha$, there is a set of variables $Z$ that d-separates $X$ and
+  $Y$, then we can simply regress $Y$ on $X$ and $Z$. The coefficient of $X$ in the resulting
+  equation will equal the structural coefficient $\alpha$. Example, Figure 3.15, 3.16.
+  
+  2. If there is no set of variables that $d$-separates $X$ and $Y$ in $G_\alpha$, we can use total effects to identify direct effects. _Instrumental variable_: it is $d$-separated from $Y$ in $G_\alpha$ and, it is $d$-connected to $X$. Example, Figure 3.17.
+
+- To estimate a given effect, all we need to do is to write down a regression equation and specify:
+  1. what variables should be included in the equation and 
+  2. which of the coefficients in that equation represents the effect of interest. 
+
