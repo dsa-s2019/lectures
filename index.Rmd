@@ -5,7 +5,13 @@ author: |
   | Department of Statistics
   | University of Connecticut
 date: "January 22, 2019"
-output: pdf_document
+#output:
+#  html_document:
+#    df_print: paged
+#  pdf_document: default
+output:
+  pdf_document:
+    latex_engine: xelatex
 link-citation: yes
 header-includes:
 - \newcommand{\E}{\mathbb{E}}
@@ -498,4 +504,163 @@ Example Figure 3.12.
 - To estimate a given effect, all we need to do is to write down a regression equation and specify:
   1. what variables should be included in the equation and 
   2. which of the coefficients in that equation represents the effect of interest. 
+
+# Counterfactuals and Their Applications
+
+## Counterfactuals
+- While driving home last night, I came to a fork in the road, where I had to make a choice: to take the freeway ($X$ = 1) or go on a surface street named Sepulveda Boulevard ($X$ = 0). I took Sepulveda, only to find out that the traffic was touch and go. As I arrived home, an hour later, I said to myself: "Gee, I should have taken the freeway."
+
+- This kind of statement, an "if" statement in which the "if" portion is untrue or unrealized is known as a counterfactual
+
+- The "if" portion of a counterfactual is called the hypothetical condition, or more often, the antecedent
+
+- We use counterfactuals to emphasize our wish to compare two outcomes under the exact same conditions while differing only in one aspect: the antecedent.
+
+- Writing $\mathbb{E}[\text{driving time}|do(\text{freeway}), \text{driving time}=1 \text{ hour}]$ leads to a clash between the driving time we wish to estimate and actual driving time observed.
+
+-To avoid clash, distinguish symbolically between:
+
+    1. Actual driving time
+    2. Hypothetical driving time under freeway conditions when actual surface driving time is known to be 1 hour
+  
+- To do so, use different subscripts to label two outcomes
+
+    - denote freeway driving time by $Y_{X = 1}$ (or $Y_1$)
+    - denote Sepulveda driving time by $Y_{X = 0}$ (or $Y_0$)
+    
+
+- Since $Y_0$ is the $Y$ actually observed, we wish to estimate $\mathbb{E}[Y_{X=1}| X = 0, Y = Y_0 = 1]$.
+
+## Defining and Computing Counterfactuals
+
+### The Structural Interpretation of Counterfactuals
+- Begin with fully specified model $M$, for which functions $\{F\}$ and values of exogenous variables are all known.
+
+- Simple causal model consisting of three variables: X, Y, U defined by:
+  
+    1. $X = aU$
+    2. $Y = bX + U$
+  
+- Computing the counterfactual $Y_x(u)$, that is what $Y$ would be had $X$ been $x$ in situation $U = u$
+
+- Replacing first equation with $X = x$ gives "modified" model $M_x$:
+  
+    1. $X = x$
+    2. $Y = bX + U$
+  
+- Substituting $U = u$, and solving gives $Y_x(u) = bx + u
+
+- We can also examine counterfactual $X_y(u)$, that is, what $X$ would be had $Y$ been $y$ in situation $U = u$.
+  - Replacing second equation by constant $Y = y$ and solving for $X$, we have $X_y(u) = au$, which means $X$ remains unaltered by the hpothetical condition "had $Y$ been $y$"
+  
+- Each SVM encodes within it many counterfactuals corresponding to various values its variables can take.
+
+- $\textbf{Note}$: We compute not just the probability of expected value of $Y$ under one intervention or another, but the $\textbf{actual value of Y}$ under the hypothesized $\textit{new}$ condition $X = x$. Every structural equation model assigns a definitive value to every conceivable counterfactual.
+
+### The Fundamental Law of Counterfactuals
+- Consider any arbitrary two variables $X$ and $Y$, not necessarily connected by a single equation. Let $M_x$ stand for the modified version of $M$, with the equation of $X$ replaced by $X = x$. The formal definition of the counterfactual $Y_x(u)$ reads: \begin{equation}\label{eq:cf1}
+Y_x(u) = Y_{M_x}(u)
+\end{equation}
+
+- In words: The countervactual $Y_x(u)$ in model $M$ is defined as the solution for $Y$ in the 'surgically modified' submodel $M_x$. 
+
+- Eq.(\ref{eq:cf1}) is a fundamental principle of causla inference allowing us to answer questions of the type "what would $Y$ be had $X$ been $x$?"
+
+- Counterfactuals obey the $\textbf{consistency rule}$: _if_ $X = x$ _then_ $Y_x = Y$
+
+    - For example, if $X$ is binary, then consistency rule takes form $Y = XY_1 + (1 - X)Y_0$. This can be interpretted as $Y_1$ is equal to the observed value of $Y$ whenever $X$ takes the value 1.
+  
+### From Population Data to Individual Behavior: An Illustration
+- Fig. 4.1 represents an 'encouragement design' (p.94)
+
+    - $X$ is amount of time a student spends in an after-school remedial program
+    - $H$ is the amount of homework a student does
+    - $Y$ is a student's score on exam
+    - Value of each variable is given as number of standard deviations above the mean the student falls
+  
+- Model 4.1:
+\begin{equation*}
+\begin{split}
+  X &= U_X \\
+  H &= aX + U_H \\
+  Y &= bX + cH + U_Y \\
+  \sigma_{U_i U_j} &=0 \quad \forall i,j \in \{X, H, Y\}
+\end{split}
+\end{equation*}
+
+- Assume all $U$ factors are independent, and we are given the values of coefficients: $$a = 0.5, \quad b = 0.7, \quad c = 0.4$$
+
+- Consider Joe for whom we measure: $$X = 0.5, \quad H = 1, \quad Y = 1.5$$
+
+- We ask the question: 'What would Joe's score have been had he doubled his study time?'
+
+    - Use evidence $X = 0.5, \quad H = 1, \quad Y = 1.5$ to determine the values of the $U$ variables associated with Joe
+    - These values are invariant to hypothetical actions
+    
+- Obtaining the specific characteristics of Joe from evidence:
+\begin{equation*}
+\begin{split}
+  U_X &= 0.5 \\
+  U_H &= 1 - 0.5 \cdot 0.5 = 0.75 \\
+  U_Y &= 1.5 - 0.7 \cdot 0.5 - 0.4 \cdot 1 = 0.75
+\end{split}
+\end{equation*}
+
+- Simulating the action of doubling Joe's study time by replacing the structural equation for $H$ with the constant $H = 2$ gives modified model in Fig. 4.2. (p.95). Compute the value of $Y$ in modified model using updated $U$ values.
+\begin{equation*}
+\begin{split}
+  Y_{H=2}(U_X &= 0.5, U_H = 0.75, U_Y = 0.75) \\
+  &= 0.5 \cdot 0.7 + 2.0 \cdot 0.4 + 0.75 \\
+  &= 1.90
+\end{split}
+\end{equation*}
+
+    - Had Joe doubled his homework, his score would have been 1.9 instead of 1.5
+    
+- In summary we applied evidence to update the values of the $U$ variables, simulate external intervention to foce condition by replacing structural equation with constant, then  compute value of $Y$ given new structural equations and the updated $U$ values.
+
+### The Three Steps in Computing Counterfactuals
+
+- The three-step process for computing any deterministic counterfactual:
+
+    1. Abduction: Use evidence $E = e$ to determine the value of $U$
+    2. Action: Modify the model, $M$, by removing the structural equations for the variables in $X$ and replacing them with the appropriate functions $X = x$, to obtain the modified model, $M_x$
+    3. Prediction: Use the modified model, $M_x$, and the value of $U$ to compute the value of $Y$, the consequence of the counterfactual
+    
+- The above process will solve any deterministic counterfactual, that is, counterfactuals pertaining to a single unit of the population in which we know the value of every relevant variable.
+
+- Counterfactuals can also be probabilistic, that is pertaining to a class of units within the population. 
+
+    - A typical query might be: 'Given that we observe feature $E = e$ for a given individual, what would we expect the value of $Y$ for that individual to be if $X$ had been $x$?'
+    - This expectation is denoted $\mathbb{E}[Y_{X = x}|E = e]$, where $E = e$ is allowed to conflict with the antecedent $X = x$
+    - We can generalize the three-step process to any probabilistic nonlinear system.
+
+- Given an arbitrary counterfactuals of the form $\mathbb{E}[Y_{X = x} | E = e]$, the three-step process reads:
+
+    1. Abduction: Update $P(U)$ by the evidence to obtain $P(U|E = e)$
+    2. Action: Modify the model, M, by removing the structural equations for the variables in $X$ and replace them with the appropriate functions $X = x$ to obtain the modified model $M_x$
+    3. Use the modified model, $M_x$, and the updated probabilities over the $U$ variables, $P(U|E = e)$, to compute the expectation of $Y$, the consequence of the counterfactual
+    
+## Nondeterministic Counterfactuals
+
+### Probabilities of Counterfactuals
+
+- Refer to Eqs. (4.3) and (4.4) on p. 92
+
+- Imagine that $U = \{1, 2, 3\}$ represents three types of individuals in a population, occurring with probabilities $$P(U = 1) = \frac{1}{2}, \quad P(U = 2) = \frac{1}{3}, \quad P(U = 3) = \frac{1}{6}$$
+
+- All individuals within a population type have the same values of the counterfactuals as specified by the rows in Table 4.1 (p.93). Using these values, it is possible to compute the probability that the counterfactual will satisfy a specific condition.
+
+- For example: We can compute the proportion of units for which $Y$ would be 3 had $X$ been 2, or using notation $Y_2(u) = 3$.
+
+    - Refer to table to see that $P(Y_2 = 3) = \frac{1}{2}$
+    - Using the table, how about $P(Y_2 > 3)$? $\quad \quad \quad \quad \quad$ (Answer: $\frac{1}{2}$)
+    
+- We can also compute joint probabilities of every combination of counterfactual and observable events:
+
+    - For example: $P(Y_2 > 3, Y_1 < 4) = \frac{1}{3}$
+    
+- We can also compute conditional probabilities among counterfactuals:
+
+    - For example: Among the individuals for which $Y$ is greater than 2, the probability is $\frac{2}{2}$ that $Y$ would increase if $X$ were 3 since $$P(Y_3 > Y | Y > 2) = \frac{\frac{1}{3}}{\frac{1}{2}} = \frac{2}{3}$$
 
