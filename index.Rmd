@@ -553,7 +553,7 @@ Example Figure 3.12.
 - We can also examine counterfactual $X_y(u)$, that is, what $X$ would be had $Y$ been $y$ in situation $U = u$.
   - Replacing second equation by constant $Y = y$ and solving for $X$, we have $X_y(u) = au$, which means $X$ remains unaltered by the hpothetical condition "had $Y$ been $y$"
   
-- Each SVM encodes within it many counterfactuals corresponding to various values its variables can take.
+- Each SCM encodes within it many counterfactuals corresponding to various values its variables can take.
 
 - $\textbf{Note}$: We compute not just the probability of expected value of $Y$ under one intervention or another, but the $\textbf{actual value of Y}$ under the hypothesized $\textit{new}$ condition $X = x$. Every structural equation model assigns a definitive value to every conceivable counterfactual.
 
@@ -564,7 +564,7 @@ Y_x(u) = Y_{M_x}(u)
 
 - In words: The countervactual $Y_x(u)$ in model $M$ is defined as the solution for $Y$ in the 'surgically modified' submodel $M_x$. 
 
-- Eq.(\ref{eq:cf1}) is a fundamental principle of causla inference allowing us to answer questions of the type "what would $Y$ be had $X$ been $x$?"
+- Eq.(\ref{eq:cf1}) is a fundamental principle of causal inference allowing us to answer questions of the type "what would $Y$ be had $X$ been $x$?"
 
 - Counterfactuals obey the $\textbf{consistency rule}$: _if_ $X = x$ _then_ $Y_x = Y$
 
@@ -659,8 +659,165 @@ Y_x(u) = Y_{M_x}(u)
 - We can also compute joint probabilities of every combination of counterfactual and observable events:
 
     - For example: $P(Y_2 > 3, Y_1 < 4) = \frac{1}{3}$
+    - This is the joint probability of two events occurring in two different 'worlds.' The firset $Y_2 > 3$ in an $X = 2$ world, and the second $Y_1 < 4$ in an $X = 1$ world.
+    - These joint probabilities over 'multiple-world' counterfactuals are easily expressed using subscript notation, but _cannot_ be expressed using the _do(x)_ notation since the latter delivers a single probability for each intervention $X = x$.
     
 - We can also compute conditional probabilities among counterfactuals:
 
     - For example: Among the individuals for which $Y$ is greater than 2, the probability is $\frac{2}{2}$ that $Y$ would increase if $X$ were 3 since $$P(Y_3 > Y | Y > 2) = \frac{\frac{1}{3}}{\frac{1}{2}} = \frac{2}{3}$$
+    
+- Example p.99
 
+- Can counterfactual notation capture the postintervention single-world expression $\mathbb{E}[Y|do(X = x), Z = 1]$?
+
+    - Answer: Yes
+    - Translating $\mathbb{E}[Y|do(X = x), Z = 1]$ into counterfactual notation yields $\mathbb{E}[Y_{X=1}|Z_{X=1} = 1]$.
+        - $Z_{X=1}$ stands for the value that $Z$ would attain had $X = 1$
+        
+- Example p. 100
+
+### The Graphical Representation of Counterfactuals
+
+- Can we see counterfactuals within the causal graphs associated with the model?
+
+    - Yes!
+    - From the fundamental law of counterfactuals, Eq.(\ref{eq:cf1}), if we modeify model $M$ to obtain the submodel $M_x$, then the outcome variable $Y$ in the modified model is the counterfactual $Y_x$ of the original model
+    - This modification calls for removing all arrows entering the variable $X$
+    
+- $\textbf{Theorem 4.3.1: Counterfactual Interpretation of Backdoor}$: If a set $Z$ of variables satisfies the backdoor condition relative to $(X,Y)$, then, for all $x$, the counterfactual $Y_x$ is conditionally independent of $X$ given $Z$, $$P(Y_x|X,Z) = P(Y_x|Z)$$
+
+    - Implies that $P(Y_x = y)$ is identifiable by adjustment formula of Eq. (3.5)
+    \begin{equation*}
+      \begin{split}
+        PY_x = y) &= \sum\limits_z P(Y_x = y|Z = z)P(z) \\
+                  &=  \sum\limits_z P(Y_x = y|Z = z, X = x) P(z) \\
+                  &= \sum\limits_z P(Y = y|Z = z, X = x)P(z)
+      \end{split}
+    \end{equation*}
+
+### Counterfactuals in Linear Models
+
+- In nonparametric models, counterfactual quantities of the form $\mathbb{E}[Y_{X = x} | Z = z]$ may not be identifiable
+
+- However, in fully linear models any counterfactual quanitity is identifiable whenever the model parameters are identified
+
+- Question: Can counterfactuals be identified in observasional studies when some of the model parameters are not identified?
+
+    - Yes!
+    - Any counterfactual of the form $\mathbb{E}[Y_{X = x} | Z = e]$ where $e$ is an arbitrary set of evidence, is identified whenever $\mathbb{E}[Y|do(X = x)]$ is identified
+    
+- $\textbf{Theorem 4.3.2}$: Let $\tau$ be the slope of the total effect of $X$ on $Y$, $$\tau = \mathbb{E}[Y|do(x+1)] - \mathbb{E}[Y|do(x)]$$ then, for any evidence $Z = e$, we have $$\mathbb{E}[Y_{X = x}|Z = e] = \mathbb{E}[Y|Z = e] + \tau(x - \mathbb{E}[X|Z = e])$$
+
+- Recall situation in Fig 4.2 (p. 95). Theorem 4.3.2 can be applied to this model to comptue the _effect_ _of_ _treatment_ _on_ _the_ _treated_: $$ETT = \mathbb{E}[Y_1 - Y_0 | X = 1]$$ Substituting the evidence $e = \{X = 1\}$ into Theorem 4.3.2 (refer to model 4.1):
+\begin{equation*}
+  \begin{split}
+    ETT &= \mathbb{E}[Y_1 | X = 1] - \mathbb{E}[Y_0|X = 1] \\
+    &= \mathbb{E}[Y|X = 1] - E[Y|X = 1] + \tau(1 - \mathbb{E}[X|X=1]) - \tau(0 - \mathbb{E}[X|X=1]) \\
+    &= \mathbb{E}[Y|do(x+1)] - \mathbb{E}[Y|do(x)] \\
+    &= \tau \\
+    &= b + ac \\
+    &= 0.9
+  \end{split}
+\end{equation*}
+
+## Practical Uses of Counterfactuals
+
+- When a set $Z$ of covariates satisfies the backdoor criterion with regard to the treatment and outcome variables, ETT probabilities are given by a modified adjustment formula:
+\begin{equation}\label{eq:4.21}
+P(Y_x = y| X = x') = \sum\limits_z P(Y = y|X = x, Z = z)P(Z = z|X = x')
+\end{equation}
+
+### Additive Interventions
+
+- Example 4.4.2
+
+- Suppose we add a quanityt $q$ to a treatment variable $X$ that is currently at level $X = x'$. The resulting out come would be $Y_{x' + q}$, and the average value of this outcome over all units currently at level $X = x'$ would be $\mathbb{E}[Y_x|x']$ with $x = x' + q$.
+
+- Whenever a set $Z$ in our model satisfies the backdoor criterion, the effect of an additive intervention is estimable using the ETT adjustment formula Eq.(\ref{eq:4.21}). Substituting in $x = x' + q$ and taking expectations gives effect of this intervention called $add(q)$:
+\begin{equation*}
+  \begin{split}
+    \mathbb{E}[Y|add)q)] - \mathbb{E}[Y] &= \sum\limits_{x'} \mathbb{E}[Y_{x' + q}|X = x']P(x') - \mathbb{E}{Y} \\
+    &= \sum\limits_{x'} \sum\limits_z \mathbb{E}[Y|X = x' + q, Z = z]P(Z = z|X = x')P(X = x') - \mathbb{E}[Y]
+  \end{split}
+\end{equation*}
+
+### Personal Decision Making
+
+- Example 4.4.3
+
+- Designating remission by $Y = 1$ and decision to undergo radiation by $X = 1$, the probability that determines whether Ms. Jones is justified in attributing her remission to the irradiation $(X = 1)$ is $$PN = P(Y_0 = 0 | X = 1, Y = 1)$$
+
+    - It reads: the probability that remission would _not_ have occurred $(Y = 0)$ had Ms. Jones not gone through irradiation, given that she did in fact go through irradiation $(X = 1)$, and remission did occur $(Y = 1)$
+    - The label PN stands for 'probability of necessity' and it measures the degree to which Ms Jones' decision was _necessary_ for h er positive outcome
+    
+- Similarly, the probability that Ms. Smith's regret is justified is given by $$PS = P(Y_1 = 1 | X = 0, Y = 0)$$
+
+    - It reads: the probability that remission would have occurred had Ms. Smith gone through irradiation $(Y_1 = 1)$, given that she did not in fact go through irradiation $(X = 0)$, and remission did not occur $(Y = 0)$
+    - PS stands for the 'probability of sufficiency', and it measures the degree to which the action not taken, $(X = 1)$, would have been sufficient for her recovery
+    
+- Ms. Daily's dilemma is to quantify the probability that irradiation is both _necessary_ _and_ _sufficient_ for eliminating her tumor, $$PNS = P(Y_1 = 1, Y_0 = 0)$$
+
+    - where $Y_1$ and $Y_0$ stand for remission under treatment $(Y_1)$, and nontreatment $(Y_0)$
+    - This probability cannot be assessed from experimental studies
+    - PNS _can_ be estimated if we assume _monotonicity_, namely that irradiation cannot cause the recurrence of a tumor that was about to remit
+    - Under monotonicity experimental data are sufficient to conclude $$PNS = P(Y = 1|do(X = 1)) - P(Y = 1|do(X = 0))
+
+### Mediation and Path-disabling Interventions
+
+- Example 4.4.5
+
+- Because we are dealing with disabling processes rather than changing levels of variables, there is no way we can express the effect of such interventions using a do-operator
+
+- We can express it in counterfactual notation
+
+- Natural Indirect Effect (NIE) = $\sum\limits_q \mathbb{E}[Y|X = 1, Q = q][P(Q = q|X = 0) - P(Q = q|X = 1)]$
+
+- Expression is known as the _mediation_ _formula_, and it measures the extent to which the effect of $X$ on $Y$ is _explained_ by its effect on the dediator $Q$.
+
+## Mathematical Tool Kits for Attribution and Mediation
+
+### A Tool Kit for Attribution and Probabilities of Causation
+
+- Assuming binary events, with $X = x$ and $Y = y$ representing treatment and outcome, respectively, and $X = x'$, $Y = y'$ their negations, our target quantity can be defined as:
+
+  - 'Find the probability that if $X$ had been $x'$, $Y$ would be $y'$, given that in reality $X = x$ and $Y = y$.'
+  - Mathematically, this is $$PN(x,y) = P(Y_{x'} = y' | X = x, Y = y)$$
+  
+- $\textbf{Theorem 4.5.1}$: If $Y$ is monotonic relative to $X$, that is, $Y_1(u) \geq Y_0(u)$ $\forall u$, then $PN$ is identifiable whenever the causal effect $P(y|do(x))$ is identifiable, and $$PN = \frac{P(y) - P(y|do(x'))}{P(x,y)}$$ or, substituting $P(y) = P(y|x)P(x) + P(y|x')(1 - P(x))$, we obtain $$PN = \frac{P(y|x) - P(y|x')}{P(y|x)} + \frac{P(y|x') - P(y|do(x'))}{P(x,y)}$$
+
+    - First term on r.h.s. is called _excess_ _risk_ _ratio_ (ERR)
+    - Second term (the confounding factor) represents a _correction_ needed to account for confounding bias since $P(y|do(x')) \neq P(y|x')$.
+    - The first equation provides bounds for $PN$ in the general _nonmonotonic_ case $$max \{ 0, \frac{P(y) - P(y|do(x'))}{P(x,y)} \} \leq PN \leq min \{ 1, \frac{P(y'|do(x')) - P(x', y')}{P(x,y)} \} $$
+    
+        - LB = ERR + CF
+        - UB = ERR + q + CF
+        - where
+        \begin{equation*}
+          \begin{split}
+            CF &\triangleq \frac{P(y|x') - P(y_{x'})}{P(x,y)} \\
+            ERR &\triangleq 1 - \frac{1}{RR} = 1 - \frac{P(y|x')}{P(y|x)} \\
+            q &\triangleq \frac{P(y'|x)}{P(y|x)}
+          \end{split}
+        \end{equation*}
+        
+- Example 4.5.1
+
+### A Tool Kit for Mediation
+
+- Figure 4.6 (p.121)
+
+- $\textbf{Total Effect}$: $TE = \mathbb{E}[Y_1 - Y_0] = \mathbb{E}[Y|do(T=1)] - \mathbb{E}[Y|do(T = 0)]$
+
+    - TE measures the expected increase in $Y$ as the treatment changes from $T = 0$ to $T = 1$, while the mediator is allowed to track the change in $T$ naturally
+
+- $\textbf{Controlled Direct Effect}$: $CDE(m) = \mathbb{E}[Y_{1,m} - Y_{0,m}] = \mathbb{E}[Y|do(T = 1, M = m)] - \mathbb{E}[Y|do(T = 0, M = m)]$
+
+    - CDE measures the expected increase in $Y$ as the treatment changes from $T = 0$ to $T = 1$, while the mediator is set to a specified level $M = m$ uniformly over the entire population
+
+- $\textbf{Natural Direct Effect}$: $NDE = \mathbb{E}[Y_{1, M_0} - Y_{0, M_0}]$
+
+    - NDE measures the expected increase in $Y$ as the treatment changes from $T = 0$ to $T = 1$, while the mediator is set to whatever value it _would_ _have_ _attained_ prior to the change
+
+- $\textbf{Natural Indirect Effect}$: $NIE = \mathbb{E}[Y_{0, M_1} - Y_{0, M_0}]$
+
+    - NIE measures the expected increase in $Y$ when the treatment is held constant, $T = 0$, and $M$ changes to whatever value it would have attained under $T = 1$
