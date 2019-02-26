@@ -5,11 +5,8 @@ author: |
   | Department of Statistics
   | University of Connecticut
 date: "January 22, 2019"
-#output:
-#  html_document:
-#    df_print: paged
-#  pdf_document: default
 output:
+  html_document: default
   pdf_document:
     latex_engine: xelatex
 link-citation: yes
@@ -708,7 +705,7 @@ Y_x(u) = Y_{M_x}(u)
     
 - $\textbf{Theorem 4.3.2}$: Let $\tau$ be the slope of the total effect of $X$ on $Y$, $$\tau = \mathbb{E}[Y|do(x+1)] - \mathbb{E}[Y|do(x)]$$ then, for any evidence $Z = e$, we have $$\mathbb{E}[Y_{X = x}|Z = e] = \mathbb{E}[Y|Z = e] + \tau(x - \mathbb{E}[X|Z = e])$$
 
-- Recall situation in Fig 4.2 (p. 95). Theorem 4.3.2 can be applied to this model to comptue the _effect_ _of_ _treatment_ _on_ _the_ _treated_: $$ETT = \mathbb{E}[Y_1 - Y_0 | X = 1]$$ Substituting the evidence $e = \{X = 1\}$ into Theorem 4.3.2 (refer to model 4.1):
+- Recall situation in Fig 4.2 (p. 95) where the counterfactual $Y_{H=2}$ under the evidence $e=\{X = 0.5, H = 1, Y = 1\}$ was computed. Theorem 4.3.2 can be applied to this model to comptue the _effect_ _of_ _treatment_ _on_ _the_ _treated_: $$ETT = \mathbb{E}[Y_1 - Y_0 | X = 1]$$ Substituting the evidence $e = \{X = 1\}$ into Theorem 4.3.2 (refer to model 4.1):
 \begin{equation*}
   \begin{split}
     ETT &= \mathbb{E}[Y_1 | X = 1] - \mathbb{E}[Y_0|X = 1] \\
@@ -722,38 +719,76 @@ Y_x(u) = Y_{M_x}(u)
 
 ## Practical Uses of Counterfactuals
 
+### Recruitment to a Program
+
+- Example 4.4.1 (p.107)
+
+- Critics claim program is a waste of taxpayer's money and should be terminated, why?
+
+    - Reasoning: While program was successful in experimental study, where people chosen at random, there is no proof the program is successful among those choosing to enroll of their own volition
+    - Critis say those enrolling are more intelligent, resourceful and socially connected than those who are eligible and did not enroll
+    - Critics claim that we need to estimate the _differential_ benefit of the program on those enrolled: the extent to which hiring rate has increasing among the enrolled, compared to what it would have been had they not been trained.
+    
+- Using counterfactual notation, letting $X = 1$ represent trianing, and $Y = 1$ represent hiring, we need to evaluate ETT (p.106 Eq. 4.18), that is $ETT = \mathbb{E}[Y_1 - Y_0|X = ]$
+
+    - Unfortunately the difference $Y_1 - Y_0$ represents the causal effect of trianing $(X)$ on hiring $(Y)$ for a _randomly_ chosen individual, and the condition $X = 1$ limits the choice to those who actually chose the training on their own
+    - This is a clash between the antecedent $(X = 0)$ of the counterfactual $Y_0$ and the event it is condition on $X = 1$
+    - $\mathbb{E}[Y_0 | X = 1]$  can be reduced to estimable expressions in many situations (not all)
+
 - When a set $Z$ of covariates satisfies the backdoor criterion with regard to the treatment and outcome variables, ETT probabilities are given by a modified adjustment formula:
 \begin{equation}\label{eq:4.21}
 P(Y_x = y| X = x') = \sum\limits_z P(Y = y|X = x, Z = z)P(Z = z|X = x')
 \end{equation}
 
+- Comparing to standard adjustment formula $P(Y = y| do(X = x)) = \sum P(Y = y|X = x, Z = z)P(Z =z)$ both formulas require conditioning on $(Z = z)$ then averaging over $z$ with modified adjustment formula using a different weighted average
+
+- Using the modified adjustment formula we cna get an estimable, noncounterfactual expression for ETT
+\begin{equation*}
+  \begin{split}
+    ETT &= \mathbb{E}[Y_1 - Y_0|X = 1] \\
+    &= \mathbb{E}[Y_1| X = 1] - \mathbb{E}[Y_0|X = 1] \\
+    &= \mathbb{E}[Y|X = 1] - \sum\limits_z \mathbb{E}[Y|X=0, Z = z]P(Z = z|X = 1)
+  \end{split}
+\end{equation*}
+
+    - $\mathbb{E}[Y_1|X = 1] = \mathbb{E}[Y|X=1]$ because conditional on $X = 1$, the value that $Y$ would get had $X$ been 1 is just the observed value of $Y$
+
 ### Additive Interventions
 
-- Example 4.4.2
+- Example 4.4.2 (p.109)
 
-- Suppose we add a quanityt $q$ to a treatment variable $X$ that is currently at level $X = x'$. The resulting out come would be $Y_{x' + q}$, and the average value of this outcome over all units currently at level $X = x'$ would be $\mathbb{E}[Y_x|x']$ with $x = x' + q$.
+- Suppose we add a quanity $q$ to a treatment variable $X$ that is currently at level $X = x'$. The resulting outcome would be $Y_{x' + q}$, and the average value of this outcome over all units currently at level $X = x'$ would be $\mathbb{E}[Y_x|x']$ with $x = x' + q$.
 
 - Whenever a set $Z$ in our model satisfies the backdoor criterion, the effect of an additive intervention is estimable using the ETT adjustment formula Eq.(\ref{eq:4.21}). Substituting in $x = x' + q$ and taking expectations gives effect of this intervention called $add(q)$:
 \begin{equation*}
   \begin{split}
-    \mathbb{E}[Y|add)q)] - \mathbb{E}[Y] &= \sum\limits_{x'} \mathbb{E}[Y_{x' + q}|X = x']P(x') - \mathbb{E}{Y} \\
+    \mathbb{E}[Y|add(q)] - \mathbb{E}[Y] &= \sum\limits_{x'} \mathbb{E}[Y_{x' + q}|X = x']P(x') - \mathbb{E}{Y} \\
     &= \sum\limits_{x'} \sum\limits_z \mathbb{E}[Y|X = x' + q, Z = z]P(Z = z|X = x')P(X = x') - \mathbb{E}[Y]
   \end{split}
 \end{equation*}
+- $Z$ my include whichever variables so long as each can be measured and together they satisfy the backdoor condition
 
 ### Personal Decision Making
 
-- Example 4.4.3
+- Example 4.4.3 (p.111)
 
 - Designating remission by $Y = 1$ and decision to undergo radiation by $X = 1$, the probability that determines whether Ms. Jones is justified in attributing her remission to the irradiation $(X = 1)$ is $$PN = P(Y_0 = 0 | X = 1, Y = 1)$$
 
     - It reads: the probability that remission would _not_ have occurred $(Y = 0)$ had Ms. Jones not gone through irradiation, given that she did in fact go through irradiation $(X = 1)$, and remission did occur $(Y = 1)$
-    - The label PN stands for 'probability of necessity' and it measures the degree to which Ms Jones' decision was _necessary_ for h er positive outcome
+    - The label PN stands for 'probability of necessity' and it measures the degree to which Ms Jones' decision was _necessary_ for her positive outcome
     
 - Similarly, the probability that Ms. Smith's regret is justified is given by $$PS = P(Y_1 = 1 | X = 0, Y = 0)$$
 
     - It reads: the probability that remission would have occurred had Ms. Smith gone through irradiation $(Y_1 = 1)$, given that she did not in fact go through irradiation $(X = 0)$, and remission did not occur $(Y = 0)$
     - PS stands for the 'probability of sufficiency', and it measures the degree to which the action not taken, $(X = 1)$, would have been sufficient for her recovery
+    
+- These probabilities, sometimes referred to as 'probabilities of causation', are not, in general, estimable from either observational or experimental data
+
+    - However, under certain conditions they _are_ estimable when both observational and experimental data are available.
+    
+- Imagine Ms. Daily facing the same decision as Ms. Jones and asking herself: If tumor is type that would not recur under lumpectomy alone, why go through irradiation? Similarly, if tumor is type that would recur regardless of irradiation treatment, why go through irradiation?' 
+
+    - Only go through radiation if tumor is type that would remiss under treatment and recur under no treatment
     
 - Ms. Daily's dilemma is to quantify the probability that irradiation is both _necessary_ _and_ _sufficient_ for eliminating her tumor, $$PNS = P(Y_1 = 1, Y_0 = 0)$$
 
@@ -764,15 +799,27 @@ P(Y_x = y| X = x') = \sum\limits_z P(Y = y|X = x, Z = z)P(Z = z|X = x')
 
 ### Mediation and Path-disabling Interventions
 
-- Example 4.4.5
+- Example 4.4.5 (p. 114)
 
-- Because we are dealing with disabling processes rather than changing levels of variables, there is no way we can express the effect of such interventions using a do-operator
+- Because we are dealing with disabling processes rather than changing levels of variables, there is no way we can express the effect of such interventions using a _do_-operator
 
 - We can express it in counterfactual notation
 
-- Natural Indirect Effect (NIE) = $\sum\limits_q \mathbb{E}[Y|X = 1, Q = q][P(Q = q|X = 0) - P(Q = q|X = 1)]$
+- The hiring status $(Y=1)$ of a female applicant with qualification $Q = q$, given that the employer treats her as though she is a male is captured by the counterfactual $Y_{X = 1, Q = q}$ where $X = 1$ refers to being male.
 
-- Expression is known as the _mediation_ _formula_, and it measures the extent to which the effect of $X$ on $Y$ is _explained_ by its effect on the dediator $Q$.
+    - Since value $q$ would vary among applicants, this quantity must be averaged according to the distribution of female qualification giving $$\sum\limits_q \mathbb{E}[Y_{X=1, Q = q}]P(Q = q|X = 0)$$
+    - Similarly, male applicants chance at hiring has average governed by the male qualification  $$\sum\limits_q \mathbb{E}[Y_{X=1, Q = q}]P(Q = q|X = 1)$$
+    - Subtracting the two quantities gives  $$\sum\limits_q \mathbb{E}[Y_{X=1, Q = q}][P(Q = q|X = 0)- P(Q = q|X = 1)]$$ which is the indirect effect of gender on hiring, _mediated_ _by_ _qualification_.
+        
+        - This effect is called the natural indirect effect (NIE), because qualification $Q$ is allowed to naturally vary from applicant to applicant
+
+- Can such a counterfactual expression be identified from data?
+
+    - Yes! In absense of confounding, the NIE can be estimated by conditional probabilities
+    - \begin{equation*}
+        NIE = \sum\limits_q \mathbb{E}[Y|X = 1, Q = q][P(Q = q|X = 0) - P(Q = q|X = 1)]
+      \end{equation*}
+    - Expression is known as the _mediation_ _formula_, and measures the extent to which the effect of $X$ on $Y$ is _explained_ by its effect on the mediator $Q$
 
 ## Mathematical Tool Kits for Attribution and Mediation
 
@@ -780,44 +827,133 @@ P(Y_x = y| X = x') = \sum\limits_z P(Y = y|X = x, Z = z)P(Z = z|X = x')
 
 - Assuming binary events, with $X = x$ and $Y = y$ representing treatment and outcome, respectively, and $X = x'$, $Y = y'$ their negations, our target quantity can be defined as:
 
-  - 'Find the probability that if $X$ had been $x'$, $Y$ would be $y'$, given that in reality $X = x$ and $Y = y$.'
-  - Mathematically, this is $$PN(x,y) = P(Y_{x'} = y' | X = x, Y = y)$$
+    - 'Find the probability that if $X$ had been $x'$, $Y$ would be $y'$, given that in reality $X = x$ and $Y = y$.'
+    - Mathematically, this is $$PN(x,y) = P(Y_{x'} = y' | X = x, Y = y)$$, and called the 'probability of necessity'
+    - Question: What assumptions permit us to identify $PN$ from empirical studies (observational and/or experimental)?
   
-- $\textbf{Theorem 4.5.1}$: If $Y$ is monotonic relative to $X$, that is, $Y_1(u) \geq Y_0(u)$ $\forall u$, then $PN$ is identifiable whenever the causal effect $P(y|do(x))$ is identifiable, and $$PN = \frac{P(y) - P(y|do(x'))}{P(x,y)}$$ or, substituting $P(y) = P(y|x)P(x) + P(y|x')(1 - P(x))$, we obtain $$PN = \frac{P(y|x) - P(y|x')}{P(y|x)} + \frac{P(y|x') - P(y|do(x'))}{P(x,y)}$$
+- $\textbf{Theorem 4.5.1}$: If $Y$ is monotonic relative to $X$, that is, $Y_1(u) \geq Y_0(u)$ $\forall u$, then $PN$ is identifiable whenever the causal effect $P(y|do(x))$ is identifiable, and 
+\begin{equation}
+PN = \frac{P(y) - P(y|do(x'))}{P(x,y)} \quad \quad \quad (4.28)
+\end{equation}
+or, substituting $P(y) = P(y|x)P(x) + P(y|x')(1 - P(x))$, we obtain 
+\begin{equation}
+PN = \frac{P(y|x) - P(y|x')}{P(y|x)} + \frac{P(y|x') - P(y|do(x'))}{P(x,y)} \quad \quad \quad (4.29)
+\end{equation}
 
     - First term on r.h.s. is called _excess_ _risk_ _ratio_ (ERR)
     - Second term (the confounding factor) represents a _correction_ needed to account for confounding bias since $P(y|do(x')) \neq P(y|x')$.
-    - The first equation provides bounds for $PN$ in the general _nonmonotonic_ case $$max \{ 0, \frac{P(y) - P(y|do(x'))}{P(x,y)} \} \leq PN \leq min \{ 1, \frac{P(y'|do(x')) - P(x', y')}{P(x,y)} \} $$
+
+- Example: Suppose there is a case brought against a car manufacturer, claiming that its car's faulty design led to a man's death in a car crash. The ERR teslls us how much more likely poeple are to die in crashes when driving one of the manufacturer's cars. If it turns out that people who buy the manufacturer's cares are more likely to drive faster than the general poipulation, the second term will correct for this bias.
+
+- Eq.(4.29) provides an estimable measure of necessary causation which can be used for monotinic $Y_x(u)$ whenever the causal effect $P(y|do(x))$ can be estimated.
+
+- Eq.(4.28) provides bounds for $PN$ in the general _nonmonotonic_ case $$max \{ 0, \frac{P(y) - P(y|do(x'))}{P(x,y)} \} \leq PN \leq min \{ 1, \frac{P(y'|do(x')) - P(x', y')}{P(x,y)} \} $$
     
-        - LB = ERR + CF
-        - UB = ERR + q + CF
-        - where
-        \begin{equation*}
-          \begin{split}
-            CF &\triangleq \frac{P(y|x') - P(y_{x'})}{P(x,y)} \\
-            ERR &\triangleq 1 - \frac{1}{RR} = 1 - \frac{P(y|x')}{P(y|x)} \\
-            q &\triangleq \frac{P(y'|x)}{P(y|x)}
-          \end{split}
-        \end{equation*}
+    - LB = ERR + CF
+    - UB = ERR + q + CF
+    - where
+    \begin{equation}
+      \begin{split}
+        CF &\triangleq \frac{P(y|x') - P(y_{x'})}{P(x,y)} \\
+        ERR &\triangleq 1 - \frac{1}{RR} = 1 - \frac{P(y|x')}{P(y|x)} \\
+        q &\triangleq \frac{P(y'|x)}{P(y|x)}
+      \end{split}
+    \end{equation}
+    - $CF$ represents the normalized degree of confounding among the unexposed $(X = x')$
+    - $ERR$ is the 'excess risk ratio'
+    - $q$ is the ratio of negative to positive outcomes among the exposed.
         
-- Example 4.5.1
+- If it is the case that the experimental and survey data have been drawn at random from the same population, then the experimental data can be used to esetimate the counterfactuals of interest, for example $P(Y_x = y)$ for the observational as well as experimental sampled populations.
+        
+- Example 4.5.1 (p.119)
 
 ### A Tool Kit for Mediation
 
+- Recall mediation (p.75)
+
+- Canonical problem for a typical mediation problem takes the form: $$t = f_T(u_T) \quad m = f_M(t, u_M) \quad y = f_Y(t, m, u_Y)$$ where $T$ is treatment, $M$ is mediator, and $Y$ is outcome. $U_T, U_M, U_Y$ represent omitted factors influencing $T<M<Y$.
+
 - Figure 4.6 (p.121)
 
-- $\textbf{Total Effect}$: $TE = \mathbb{E}[Y_1 - Y_0] = \mathbb{E}[Y|do(T=1)] - \mathbb{E}[Y|do(T = 0)]$
+- $\textbf{Counterfactual definition of direct and indirect effects}$
 
-    - TE measures the expected increase in $Y$ as the treatment changes from $T = 0$ to $T = 1$, while the mediator is allowed to track the change in $T$ naturally
+    a) $\textbf{Total Effect}$: $TE = \mathbb{E}[Y_1 - Y_0] = \mathbb{E}[Y|do(T=1)] - \mathbb{E}[Y|do(T = 0)]$
 
-- $\textbf{Controlled Direct Effect}$: $CDE(m) = \mathbb{E}[Y_{1,m} - Y_{0,m}] = \mathbb{E}[Y|do(T = 1, M = m)] - \mathbb{E}[Y|do(T = 0, M = m)]$
+        - TE measures the expected increase in $Y$ as the treatment changes from $T = 0$ to $T = 1$, while the mediator is allowed to track the change in $T$ naturally
 
-    - CDE measures the expected increase in $Y$ as the treatment changes from $T = 0$ to $T = 1$, while the mediator is set to a specified level $M = m$ uniformly over the entire population
+    b) $\textbf{Controlled Direct Effect}$: $CDE(m) = \mathbb{E}[Y_{1,m} - Y_{0,m}] = \mathbb{E}[Y|do(T = 1, M = m)] - \mathbb{E}[Y|do(T = 0, M = m)]$
 
-- $\textbf{Natural Direct Effect}$: $NDE = \mathbb{E}[Y_{1, M_0} - Y_{0, M_0}]$
+        - CDE measures the expected increase in $Y$ as the treatment changes from $T = 0$ to $T = 1$, while the mediator is set to a specified level $M = m$ uniformly over the entire population
 
-    - NDE measures the expected increase in $Y$ as the treatment changes from $T = 0$ to $T = 1$, while the mediator is set to whatever value it _would_ _have_ _attained_ prior to the change
+    c) $\textbf{Natural Direct Effect}$: $NDE = \mathbb{E}[Y_{1, M_0} - Y_{0, M_0}]$
 
-- $\textbf{Natural Indirect Effect}$: $NIE = \mathbb{E}[Y_{0, M_1} - Y_{0, M_0}]$
+        - NDE measures the expected increase in $Y$ as the treatment changes from $T = 0$ to $T = 1$, while the mediator is set to whatever value it _would_ _have_ _attained_ prior to the change
 
-    - NIE measures the expected increase in $Y$ when the treatment is held constant, $T = 0$, and $M$ changes to whatever value it would have attained under $T = 1$
+    d) $\textbf{Natural Indirect Effect}$: $NIE = \mathbb{E}[Y_{0, M_1} - Y_{0, M_0}]$
+
+        - NIE measures the expected increase in $Y$ when the treatment is held constant, $T = 0$, and $M$ changes to whatever value it would have attained under $T = 1$
+        
+- $TE = NDE - NIE_r \quad \quad (4.48)$
+
+    - $NIE_r$ stands for $NIE$ under reverse transition, from $T = 1$ to $T = 0$
+    - In linear systems, reversal of transitions amounts to negating the signs of their effects giving $$TE = NDE + NIE$
+    
+- $\textbf{Conditions for identifying natural effects}$:
+  
+    - Following conditions are sufficient for identifying both direct and indirect natural effects. We can identify the $NDE$ and $NIE$ provided there exists a set $W$ of measured covariates such that:
+    
+      1) No member of $W$ is a descendant of $T$
+      2) $W$ blocks all backdoor paths from $M$ to $Y$ (after removing $T \rightarrow M$ and $T \rightarrow Y$)
+      3) The $W$-specific effect of $T$ on $M$ is identifiable (possibly using experiments or adjustments)
+      4) The $W$-specific joint effect of $\{T, M\}$ on $Y$ is identifiable (possibly using experiments or adjustments)
+    
+- $\textbf{Theorem 4.5.2: Identification of the NDE}$: When conditions 1) and 2) hold, the natural direct effect is experimentally identifiable and is given by $$NDE = \sum\limits_m \sum\limits_w [\mathbb{E}[Y|do(T=1, M = m), W = w] - \mathbb{E}[Y|do(T = 0, M = m), W = w]] \times \\ P(M = m|do(T = 0), W = w)P(W = w) \quad \quad (4.49)$$. The identifiability of the do-expressions in EQ. (4.49) is guaranteed by conditions 3) and 4) and can be determined using the backdoor or front-door criteria.
+
+- $\textbf{Corollary 4.5.1}$: If conditions 1) and 2) are satisfied by a set $W$ that also deconfounds the relationships in 3) and 4), then the do-expressions in Eq. (4.49) are reducible to conditional expectations, and the natural direct effect becomes $$NDE = \sum\limits_m \sum\limits_w [\mathbb{E}[Y|T = 1, M = m, W = w] - \mathbb{E}[Y|T = 0, M = m, W = w]] \\ \times P(M = m|T = 0, W = w)P(W = w) \quad (4.50)$$ In the nonconfounding case (Fig. 4.6(a)), $NDE$ reduces to $$NDE = \sum\limits_m [\mathbb{E}[Y|T = 1, M = m] - \mathbb{E}[Y|T = 0, M = m]]P(M = m|T = 0) \quad \quad (4.51)$$ Similarly, using $(4.48)$, and $TE = \mathbb{E}[Y|X = 1] - \mathbb{E}[Y|X = 0]$, $$NIE = \sum\limits_m \mathbb{E}[Y|T = 0, M = m][P(M = m|T = 1) - P(M = m|T = 0)] \quad \quad (4.52)$$
+
+- Last two expressions known as _mediation_ _formulas_
+
+- Counterfactual definitions of $NDE$ and $NIE$ give effects meaningful interpretations in terms of 'response fractions'
+
+    - $\frac{NDE}{TE}$: measures fraction of the response that is transmitted direction with $M$ 'frozen'
+    - $\frac{NIE}{TE}$: measures fraction of the response that may be transmitted through $M$, with $Y$ blinded to $X$
+    - $\frac{TE - NDE}{TE}$: measures fraction of the respo;nse that is necessarily due to $M$
+    
+- Example p. 123
+
+    - Encouragement Design (p.95)
+    
+        - $T = 1$ stands for participation in enhanced training program
+        - $Y=1$ stands for passing the exam
+        - $M=1$ stands for student spending more than 3 hours per week on homework
+        - Data Tables 4.6 and 4.7
+        - Research question: To what extent does students' homework contribute to their increased success rate regardless of the training program?
+        
+- Substituting the data into Eqs. (4.51) and (4.52):
+
+    - \begin{equation}
+    \begin{split}
+      NDE &= [\mathbb{E}[Y|T = 1, M = 0] - \mathbb{E}[Y|T = 0, M = 0]]P(M = 0|T = 0) + [\mathbb{E}[Y|T = 1, M = 1] - \mathbb{E}[Y|T = 0, M = 1]]P(M = 1|T = 0) \\
+          &= (0.4 - 0.2)\times(1 - 0.4) + (0.8 - 0.3)\times 0.4 = 0.32
+    \end{split}
+    \end{equation}
+    - \begin{equation}
+    \begin{split}
+    NIE &= \mathbb{E}[Y|T=0, M = 0][P(M=0|T=1) - P(M=0|T=0)] + \mathbb{E}[Y|T=0, M = 1][P(M=1|T=1) - P(M=1|T=0)]  \\
+        &= (0.75 - 0.4)(0.30-0.20) = 0.035
+    \end{split}
+    \end{equation}
+    - \begin{equation}
+    \begin{split}
+    TE &= \mathbb{E}[Y|do(T=1)] - \mathbb{E}[Y|do(T = 0)] \\
+       &= (0.80 \times 0.75 + 0.40 \times 0.25) - (0.30 \times 0.40 + 0.20 \times 0.60) = 0.46
+     \end{split}
+     \end{equation}
+    - $\frac{NIE}{TE} = 0.07$
+    - $\frac{NDE}{TE} = 0.696$
+    - $1 - \frac{NDE}{TE} = 0.304$
+    
+- Conclude program as a whole increased success rate by $46\%$
+- Of the $46\%$ increase, $30.4\%$ is due to the capacity of program to stimulate improved homework
+- Only $7\%$ of increase can be explained by stimulated homework alone _without_ the benefit of program
+  
