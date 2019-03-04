@@ -97,6 +97,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -104,14 +107,74 @@ button.code-folding-btn:focus {
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -1022,6 +1085,28 @@ TE &amp;= \mathbb{E}[Y|do(T=1)] - \mathbb{E}[Y|do(T = 0)] \\
 <li>Conclude program as a whole increased success rate by <span class="math inline">\(46\%\)</span></li>
 <li>Of the <span class="math inline">\(46\%\)</span> increase, <span class="math inline">\(30.4\%\)</span> is due to the capacity of program to stimulate improved homework</li>
 <li><p>Only <span class="math inline">\(7\%\)</span> of increase can be explained by stimulated homework alone <em>without</em> the benefit of program</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="causal-structure-learning" class="section level1">
+<h1>Causal Structure Learning</h1>
+<p>This is a brief review of some basic algorithms for causal effect estimation from observational data.</p>
+<ul>
+<li><p>PC. Causation, Prediction, and Search. Adaptive Computation and Machine Learning, second edition. MIT Press, Cambridge.</p></li>
+<li><p>FCI. Computation, Causation and Discovery, chapter An Algorithm for Causal Inference in the Presence of Latent Variables and Selection Bias, pp. 211 - 252. MIT Press.</p></li>
+<li><p>RFCI. Learning High-Dimensional drected acyclic graphs with latent and selection variables. Annals of Statistics, 40(1), 294-321.</p></li>
+<li><p>GES. Optimal structure identication with greedy search. Journal of Machine Learning Research, 3(3), 507-554.</p></li>
+<li><p>GIES. Characterization and greedy learning of interventional Markov equivalence classes of directed acyclic graphs.&quot; Journal of Machine Learning Research, 13, 2409-2464.</p></li>
+<li><p>IDA. Estimating High-Dimensional Intervention EFFects from Observational Data. Annals of Statistics, 37, 3133-3164.</p></li>
+</ul>
+<div id="pc" class="section level2">
+<h2>PC</h2>
+<div id="assumption" class="section level3">
+<h3>Assumption</h3>
+<ul>
+<li>Without hidden and selection variables.</li>
+<li>For the following, we only deal with “faithful” distributions. Definition: List of conditional independencies perfectly matches the list of d-separation relations of some DAG; such distributions are called faithful. (It’s majority in the sense that the set of unfaithful distributions has Lebesgue measure zero.) ### Rationale ### Pseudocode ### Result</li>
 </ul>
 </div>
 </div>

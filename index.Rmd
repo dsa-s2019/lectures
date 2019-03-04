@@ -957,3 +957,29 @@ PN = \frac{P(y|x) - P(y|x')}{P(y|x)} + \frac{P(y|x') - P(y|do(x'))}{P(x,y)} \qua
 - Of the $46\%$ increase, $30.4\%$ is due to the capacity of program to stimulate improved homework
 - Only $7\%$ of increase can be explained by stimulated homework alone _without_ the benefit of program
   
+
+
+# Causal Structure Learning 
+This is a brief review of some basic algorithms for causal effect estimation from observational data.
+
+- PC. Causation, Prediction, and Search. Adaptive Computation and Machine Learning, second edition. MIT Press, Cambridge.
+
+- FCI. Computation, Causation and Discovery, chapter
+An Algorithm for Causal Inference in the Presence of Latent Variables and Selection Bias, pp. 211 - 252. MIT Press. 
+
+- RFCI. Learning High-Dimensional drected acyclic graphs with latent and selection variables. Annals of Statistics, 40(1), 294-321.
+
+- GES. Optimal structure identication with greedy search. Journal of Machine Learning Research, 3(3), 507-554.
+
+- GIES. Characterization and greedy learning of interventional Markov equivalence classes of directed acyclic graphs." Journal of Machine Learning Research, 13, 2409-2464.
+
+- IDA. Estimating High-Dimensional Intervention EFFects from Observational Data. Annals of Statistics, 37, 3133-3164.
+
+## PC
+### Assumption
+- Without hidden and selection variables.
+- For the following, we only deal with "faithful" distributions. Definition: List of
+conditional independencies perfectly matches the list of d-separation relations of some DAG; such distributions are called faithful. (It's majority in the sense that the set of unfaithful distributions has Lebesgue measure zero.)
+### Rationale
+### Pseudocode
+### Result
