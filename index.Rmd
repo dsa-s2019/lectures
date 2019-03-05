@@ -1097,3 +1097,65 @@ Since they are both built up from PC algorithm, they are also order-dependent.
 All the above methods rely on i.i.d. assumption, whitch is not satisfied in interventional data. In cell biology for example, data is often measured in different mutants, or collected from gene knockdown experiments, or simply measured under different experimental conditions.
 
 The GIES algorithm is a generalization of GES to interventional data, it returns an quivalence class IEG (interventional essential graph). Similar to GES algorithm, they have forward and backward phases based on chosen score measure. The difference is GIES have an extra phase of tuning single arrow in the generated model. 
+
+## Comparison
+Firstly, we can extract the skeleton of given dataset.
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE,out.width='60%'}
+require(data.table)
+require(ggplot2)
+require(plotrix)
+require(RBGL)
+require(graph)
+require(pcalg)
+require(Rgraphviz)
+data("gmG")
+
+## skeleton
+suffStat <- list(C = cor(gmG8$x), n = nrow(gmG8$x))
+skel.gmG <- skeleton(suffStat, indepTest = gaussCItest,
+                       p = ncol(gmG8$x), alpha = 0.01)
+par(mfrow = c(1,2))
+plot(gmG8$g, main = ""); plot(skel.gmG, main = "")
+```
+
+
+Then we can compare the results from above 5 algrithm.
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+## pc
+n <- nrow (gmG8$ x)
+V <- colnames(gmG8$ x) # labels aka node names
+## estimate CPDAG
+pc.fit <- pc(suffStat = list(C = cor(gmG8$x), n = n),
+             indepTest = gaussCItest, ## indep.test: partial correlations
+             alpha=0.01, labels = V, verbose = FALSE)
+
+score <- new("GaussL0penObsScore", gmG8$x)
+## Estimate the essential graph
+ges.fit <- ges(score)
+
+
+## fci
+fci.fit <- fci(suffStat = list(C = cor(gmG8$x), n = n),
+           indepTest=gaussCItest,
+           alpha = 0.01, labels = V, doPdsep = FALSE)
+
+## rfci
+rfci.fit <- rfci(suffStat = list(C = cor(gmG8$x), n = n),
+           indepTest=gaussCItest,
+           alpha = 0.01, labels = V)
+
+## gies
+score <- new("GaussL0penObsScore", gmG8$x)
+## Estimate the essential graph
+gies.fit <- gies(score)
+## Plot the estimated essential graph and the true DAG
+
+
+par(mfrow=c(3,2))
+plot(gmG8$g, main = "True DAG")
+plot(pc.fit, main = "PC")
+plot(ges.fit$essgraph, main = "GES")
+plot(fci.fit, main = "FCI")
+plot(rfci.fit, main = "RFCI")
+plot(gies.fit$essgraph, main = "GIES")
+```
