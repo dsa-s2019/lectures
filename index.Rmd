@@ -1091,9 +1091,9 @@ $$\hat{z}_{ij|S} = \frac{1}{2}log\big(\frac{1+\hat{\rho}_{ij|S}}{1-\hat{\rho}_{i
 
 Under $H_0$, $\sqrt{n-|S|-3}\times\hat{z}_{ij|S} \sim N(0,1)$.
 
-      -$\alpha$ is treated as tuning parameter in the algorithm.
+      + $\alpha$ is treated as tuning parameter in the algorithm.
       
-      - In current implementations, the error rate of testing conditional independence is usually controlled individually for each test, without correcting the effect of multiple hypothesis testing. (Some more work is done regard of this.)
+      + In current implementations, the error rate of testing conditional independence is usually controlled individually for each test, without correcting the effect of multiple hypothesis testing. (Some more work is done regard of this.)
     
 
 + Score-based learning
@@ -1132,11 +1132,13 @@ Ancestral Graphs is proposed in 2002. (Richardson, Thomas; Spirtes, Peter (2002)
       
       +  if $ne(\alpha) \neq \emptyset$ then $pa(\alpha) \cup sp(\alpha) = \emptyset$. [there be no arrowheads present at a vertex which is an endpoint of an undirected edge.]
 
+      + Equivalent definition: (1) there are no directed cycles. (2) whenever ther is an edge $\alpha \leftrightarrow \beta$, there is no directed path from $\alpha$ to $\beta$ or from $\beta$ to $\alpha$.
+      
 ```{r knitr-ans, echo=FALSE, fig.show='hold', out.width='95%'}
 knitr::include_graphics("./figures/ancestral.png")
 ```  
   
-    + Equivalent definition: (1) there are no directed cycles. (2) whenever ther is an edge $\alpha \leftrightarrow \beta$, there is no directed path from $\alpha$ to $\beta$ or from $\beta$ to $\alpha$.
+    
   
 + Maximal ancestral graph (MAG) requires one more rule, every missing edge corresponds to a conditional independence. i.e., for every pair of non-adjacent nodes $\alpha, \beta$, there exists a set $\Gamma$ such that $\alpha \perp \!\!\! \perp \beta \ |\  \gamma$.
 
@@ -1234,13 +1236,14 @@ Reference: Chernozhukov, Victor, Iván Fernández-Val, and Blaise Melly. "Inferenc
     
     + 3. Construct confidence sets based on the variance from estimation.
 
-+ Regression model used: The analysis speciffically targets and covers the regression methods for estimating conditional distributions most commonly used in empirical work,  including classical, quantile, duration/transformation, and distribution regressions.
 
 + Two conditions:
 
       - The first stage estimators of the conditional and covariate distributions to satisfy a functional central limit theorem. 
       
       - The second condition requires validity of the bootstrap for estimating the limit laws of the first stage estimators.
+      
+      - For causal interpretation, requires the exogenous variables independent.
 
 + "We consider simple counterfactual scenarios
 consisting of marginal changes in the values of a given covariate, as well as more elaborate
@@ -1265,13 +1268,29 @@ $F_{Y<0|0>},F_{Y<1|1>}$: observed distribution function of wages for men and wom
 $F_{Y<0|1>}$: counterfactual distribution function of wages that would have prevailed for women had they faced the men's wage schedule $F_{Y_0|X_0}$:
 $$F_{Y<0|1>}(y):=\int_{\chi_1}{F_{Y_0|X_0}(y|x)dF_{X_1}(x)}$$
 
+        - For this term to be well defined, the support of 1 needs to be contained in the support of 0. In the wage example, every female worker can be matched with a male worker with the same characteristics.
+        
 + Decomposition:
 $$F_{Y<1|1>} - F_{Y<0|0>} = [F_{Y<1|1>}-F_{Y<0|1>}]+[F_{Y<0|1>}-F_{Y<0|0>}]$$
 where the first term in brackets is due to differences in the wage structure and the second term is a composition effect due to differences in characteristics. Also appliable to other functionals. (Transform between quantile and cdf).
 
-+ Types of counterfactual effect:
++ These decomposition can be applied to distribution, quantile, Lorenzo curve, Gini coefficients etc. 
+$$\Delta^{DE}(y)=F_{Y<j|k>}(y) - F_{Y<l|m>}(y)$$
+$$\Delta^{QE}(y)=Q_{Y<j|k>}(\tau) - Q_{Y<l|m>}(\tau)$$
+
+
++ Focusing on quantile effects, there are three types of counterfactual effect can be isolated:
 ```{r knitr-ct, echo=FALSE, fig.show='hold', out.width='90%'}
 knitr::include_graphics("./figures/counterfactype.png")
 ```
 
-+ Experiment: 
++ Regression model used: The analysis speciffically targets and covers the regression methods for estimating conditional distributions most commonly used in empirical work.
+      
+      + Classical regression: $Y=P(X)'\beta + Q_V(U)$.
+      
+      + Quantile regression: $F_{Y|X}(y|x)=\int_{(0,1)}1\{P(X)'\beta \leq y\}du$
+      
+      + Cox transformation model: $F_{Y|X}(y|x) = 1-exp(-exp(t(y)-P(x)'\beta))$
+      
+
++ Experiment.
