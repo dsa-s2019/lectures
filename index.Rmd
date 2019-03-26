@@ -1226,7 +1226,7 @@ plot(gies.fit$essgraph, main = "GIES")
 ```
 
 ## Counterfactual (R package)
-Reference: Chernozhukov, Victor, Iván Fernández-Val, and Blaise Melly. "Inference on counterfactual distributions." Econometrica 81.6 (2013): 2205-2268.
+Reference: Chernozhukov, Victor, Iv?n Fern?ndez-Val, and Blaise Melly. "Inference on counterfactual distributions." Econometrica 81.6 (2013): 2205-2268.
 
 + General idea: 
 
@@ -1294,3 +1294,41 @@ knitr::include_graphics("./figures/counterfactype.png")
       
 
 + Experiment.
+
+# Missing Values
+
+## Removing Features
+
+It is very common for big data sets to contain missing values. Some may be frequently absent for a given feature, or several features may be absent for specific observations. In either case, there are different ways to handle missing values. The use of each is specific to the null data you are working with. However you choose to handle the missing values, always note the process when publishing or submitting your design.
+
+If a specific feature is missing a significant proportion of values, the general rule of thumb is to remove the observation from the model completely if 60% or more of the observations are missing values for that feature.
+
+## Missing Data After Removing Useless Features
+
+Many ways to handle unknown/missing values in your data:
+
+- Removing entire observations
+- Imputing values
+    - Measures of central tendency
+    - By correlations 
+    - By similarities between cases
+
+## Removing Observations
+
+Once you have removed any unusable features, look for observations missing a value for the target feature. If we don't know their outcome, then the observation is useless and can immediately be thrown out.
+
+If any single observation is missing many values (other than the target feature), it may or may not be a good idea to remove it. This is by far the simplest way to handle missing data, but removing it completely will decrease power of the analyses. It is generally best to use imputation if possible.
+
+## Imputation
+
+### Measures of Central Tendency
+
+Although simple, this method of imputation can have serious ill effects if used incorrectly. For example, use of the *mean* for null values of a specific feature can alter the other central tendancy measures and decrease our variability. Of the three, the *mode* is the most commonly used, but only in the imputation of missing categorical values. If there is a clear mode, and a small number of null values, this is usually the best option. If there are only a few numerical values missing, then the *mean* is most acceptable, unless there are clear outliers. Be sure to check the distribution of that features values to determine skewness. If your data is not normal due to outliers, then the use of the *median* is typically best.
+
+### Correlations
+
+After you have removed all useless features and observations, and have used measures of centeral tendency where possible, have a look at your correlation table. If any two variables are highly correlated (typically .85 or above) it is common to use the correlation coefficient to imput the missing value of one of the variables.
+
+### Similarities Between Cases
+
+If correlation does not help with imputation, there exsist several functions based on the dataset as whole. Functions such as k-Nearest Neighbors (kNN) search the dataset for similar cases to those that are missing values. It will identify those closest across all factors, and imput the most likely value based on how far away you'd like it to look. kNN defaults to the closest 5 nearest observations. It will work for both categorical and numerical features.
